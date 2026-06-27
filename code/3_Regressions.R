@@ -220,7 +220,7 @@ sink()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Linear models for all combined, geo only, env only, using z-transformed (SD) units
 
-out.all.lin.units <- gam(
+out.all.lin.units.sd <- gam(
   RangeThru ~
     Mountain +
     Width +
@@ -235,7 +235,7 @@ out.all.lin.units <- gam(
   method = 'REML'
 )
 
-out.geo.lin.units <- gam(
+out.geo.lin.units.sd <- gam(
   RangeThru ~
     Mountain +
     Width +
@@ -246,7 +246,7 @@ out.geo.lin.units <- gam(
   method = 'REML'
 )
 
-out.env.lin.units <- gam(
+out.env.lin.units.sd <- gam(
   RangeThru ~
     Mountain +
     TmaxAvg +
@@ -265,19 +265,19 @@ print("LINEAR REGRESSION MODELS WITH SD UNITS - RANGE THRU RICHNESS")
 print("")
 print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 print("ALL PREDICTORS")
-summary(out.all.lin.units)
+summary(out.all.lin.units.sd)
 print("")
 print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 print("GEO PREDICTORS ONLY")
-summary(out.geo.lin.units)
+summary(out.geo.lin.units.sd)
 print("")
 print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 print("ENV PREDICTORS ONLY")
-summary(out.env.lin.units)
+summary(out.env.lin.units.sd)
 sink()
 
 ### Set up estimate dataframe for plotting
-x <- summary(out.all.lin.units)
+x <- summary(out.all.lin.units.sd)
 y <- data.frame(x$p.table)
 colnames(y) <- c("Est", "StdEr", "T.value", "P.value")
 y$LCI <- y$Est - 1.96 * y$StdEr
@@ -286,7 +286,7 @@ y$UCI <- y$Est + 1.96 * y$StdEr
 all <- y
 colnames(all) <- paste("All.", colnames(all), sep = "")
 
-x <- summary(out.geo.lin.units)
+x <- summary(out.geo.lin.units.sd)
 y <- data.frame(x$p.table)
 colnames(y) <- c("Est", "StdEr", "T.value", "P.value")
 y$LCI <- y$Est - 1.96 * y$StdEr
@@ -295,7 +295,7 @@ y$UCI <- y$Est + 1.96 * y$StdEr
 geo <- y
 colnames(geo) <- paste("Geo.", colnames(y), sep = "")
 
-x <- summary(out.env.lin.units)
+x <- summary(out.env.lin.units.sd)
 y <- data.frame(x$p.table)
 colnames(y) <- c("Est", "StdEr", "T.value", "P.value")
 y$LCI <- y$Est - 1.96 * y$StdEr
@@ -496,10 +496,9 @@ dev.off()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Nonlinear models for all combined, geo only, env only, using SD units
 # knots = 3
-## If make knots = 4, then only elevation remains non-linear.  I'm so confused!
 kn = 3
 
-out.all.nonlin.units <- gam(
+out.all.nonlin.units.sd <- gam(
   RangeThru ~
     Mountain +
     s(Width, k = kn) +
@@ -514,7 +513,7 @@ out.all.nonlin.units <- gam(
   method = 'REML'
 )
 
-out.geo.nonlin.units <- gam(
+out.geo.nonlin.units.sd <- gam(
   RangeThru ~
     Mountain +
     s(Width, k = kn) +
@@ -525,7 +524,7 @@ out.geo.nonlin.units <- gam(
   method = 'REML'
 )
 
-out.env.nonlin.units <- gam(
+out.env.nonlin.units.sd <- gam(
   RangeThru ~
     Mountain +
     s(TmaxAvg, k = kn) +
@@ -544,44 +543,44 @@ print("NON-LINEAR REGRESSION MODELS WITH SD UNITS - RANGE THRU RICHNESS")
 print("")
 print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 print("ALL PREDICTORS")
-summary(out.all.nonlin.units)
+summary(out.all.nonlin.units.sd)
 print("")
 print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 print("GEO PREDICTORS ONLY")
-summary(out.geo.nonlin.units)
+summary(out.geo.nonlin.units.sd)
 print("")
 print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 print("ENV PREDICTORS ONLY")
-summary(out.env.nonlin.units)
+summary(out.env.nonlin.units.sd)
 sink()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Compare these 6 models with AIC
 
 aicc.linear <- AICctab(
-  out.all.lin.units,
-  out.geo.lin.units,
-  out.env.lin.units,
+  out.all.lin.units.sd,
+  out.geo.lin.units.sd,
+  out.env.lin.units.sd,
   base = TRUE,
   weights = TRUE
 )
 aicc.linear
 
 aicc.nonlin <- AICctab(
-  out.all.nonlin.units,
-  out.geo.nonlin.units,
-  out.env.nonlin.units,
+  out.all.nonlin.units.sd,
+  out.geo.nonlin.units.sd,
+  out.env.nonlin.units.sd,
   base = TRUE,
   weights = TRUE
 )
 aicc.nonlin
 
 aicc.both <- AICctab(
-  out.all.lin.units,
-  out.geo.lin.units,
-  out.env.lin.units,
-  out.all.nonlin.units,
-  #out.geo.nonlin.units,    # Dropping, since same as linear geo
-  out.env.nonlin.units,
+  out.all.lin.units.sd,
+  out.geo.lin.units.sd,
+  out.env.lin.units.sd,
+  out.all.nonlin.units.sd,
+  #out.geo.nonlin.units.sd,    # Dropping, since same as linear geo
+  out.env.nonlin.units.sd,
   base = TRUE,
   weights = TRUE
 )

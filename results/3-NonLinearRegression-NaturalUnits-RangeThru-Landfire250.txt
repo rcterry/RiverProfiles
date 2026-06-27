@@ -2,9 +2,92 @@
 [1] ""
 [1] "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 [1] "ALL PREDICTORS"
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+RangeThru ~ Mountain + s(Width, k = kn) + s(Relief, k = kn) + 
+    s(Hypsometric.Integral, k = kn) + s(Roughness, k = kn) + 
+    s(TmaxAvg, k = kn) + s(PPTAvg, k = kn) + s(landfire_H_habitat_250, 
+    k = kn) + s(mean_evi_above_threshold, k = kn)
+
+Parametric coefficients:
+                Estimate Std. Error t value Pr(>|t|)    
+(Intercept)       7.5879     0.8585   8.838 1.36e-05 ***
+MountainToiyabe   2.9241     1.6462   1.776    0.111    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Approximate significance of smooth terms:
+                              edf Ref.df     F p-value  
+s(Width)                    1.000  1.000 4.909  0.0539 .
+s(Relief)                   1.528  1.769 3.877  0.1262  
+s(Hypsometric.Integral)     1.000  1.000 2.110  0.1803  
+s(Roughness)                1.000  1.000 1.951  0.1959  
+s(TmaxAvg)                  1.693  1.895 1.511  0.3309  
+s(PPTAvg)                   1.000  1.000 0.092  0.7691  
+s(landfire_H_habitat_250)   1.201  1.359 0.215  0.8433  
+s(mean_evi_above_threshold) 1.000  1.000 1.572  0.2414  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+R-sq.(adj) =  0.771   Deviance explained = 89.7%
+-REML = 24.753  Scale est. = 1.192     n = 20
 [1] ""
 [1] "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 [1] "GEO PREDICTORS ONLY"
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+RangeThru ~ Mountain + s(Width, k = kn) + s(Relief, k = kn) + 
+    s(Hypsometric.Integral, k = kn) + s(Roughness, k = kn)
+
+Parametric coefficients:
+                Estimate Std. Error t value Pr(>|t|)    
+(Intercept)       8.6936     0.5275  16.479 1.46e-10 ***
+MountainToiyabe   0.7129     0.9006   0.792    0.442    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Approximate significance of smooth terms:
+                        edf Ref.df     F p-value  
+s(Width)                  1      1 4.765  0.0466 *
+s(Relief)                 1      1 8.009  0.0134 *
+s(Hypsometric.Integral)   1      1 1.319  0.2701  
+s(Roughness)              1      1 0.423  0.5259  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+R-sq.(adj) =   0.71   Deviance explained = 78.6%
+-REML = 29.185  Scale est. = 1.5106    n = 20
 [1] ""
 [1] "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 [1] "ENV PREDICTORS ONLY"
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+RangeThru ~ Mountain + s(TmaxAvg, k = kn) + s(PPTAvg, k = kn) + 
+    s(landfire_H_habitat_250, k = kn) + s(mean_evi_above_threshold, 
+    k = kn)
+
+Parametric coefficients:
+                Estimate Std. Error t value Pr(>|t|)    
+(Intercept)       7.0056     0.7533   9.300 3.73e-07 ***
+MountainToiyabe   4.0887     1.3990   2.923   0.0117 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Approximate significance of smooth terms:
+                              edf Ref.df     F p-value
+s(TmaxAvg)                  1.826   1.97 2.869   0.119
+s(PPTAvg)                   1.000   1.00 0.113   0.742
+s(landfire_H_habitat_250)   1.000   1.00 0.002   0.965
+s(mean_evi_above_threshold) 1.000   1.00 2.823   0.117
+
+R-sq.(adj) =    0.7   Deviance explained = 79.2%
+-REML = 29.605  Scale est. = 1.5617    n = 20

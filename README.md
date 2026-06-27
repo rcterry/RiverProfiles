@@ -2,20 +2,17 @@
 
 Code repository for:
 
-> Terry, R.C., Yanites, B.K., Laney, J.A., and Rowe, R.J. "Topographic Controls on Montane Small Mammal Diversity: Canyon Relief and Width Predict Elevational Richness Peaks."
+> Terry, R.C., Yanites, B.K., Laney, J.A., and Rowe, R.J. "Canyon geomorphology predicts elevational diversity in Great Basin small mammals."
 
-This project compares canyon geomorphology and traditional environmental variables as predictors of small mammal species richness in surveys from two Great Basin mountain ranges.
+This project compares geomorphological metrics and traditional environmental variables as predictors of elevational patterns of small mammal species richness along canyon gradients in two Great Basin mountain ranges.
 
 ---
 
 ## Study System
 
-Small mammal communities were surveyed along elevation gradients in two Nevada mountain ranges:
+Survey data on small mammal communities along elevation gradients in two Nevada mountain ranges were combined with metrics capturing river canyon size and shape. The focal mountain ranges for this analysis are: the Ruby Mountains (northeastern Nevada, surveyed 2006-08) and the Toiyabe Range (central Nevada, surveyed 2009-11).
 
-- **Ruby Mountains** (northeastern Nevada) — glacially carved, metamorphic core complex; surveyed 2006–2008
-- **Toiyabe Range** (central Nevada) — less glaciated, sedimentary/igneous geology; surveyed 2009–2011
-
-Surveys targeted shrews and rodents (<500 g) across ~1,000 m of vertical relief in each range. Species richness is estimated as **range-through richness**: the number of species whose known elevational ranges encompass each survey point, which accounts for imperfect detection.
+Surveys targeted shrews and rodents (<500 g) across ~1,000 m of vertical relief in each mountain range. Species richness at each locality within each mountain range is estimated from detection-corrected presence/absence data as **range-through richness**.
 
 ---
 
@@ -25,12 +22,12 @@ Surveys targeted shrews and rodents (<500 g) across ~1,000 m of vertical relief 
 Git/
 ├── code/
 │   ├── RunMe.R
-│   ├── 1. Range Richness and Abundance Plots - Final.R
-│   ├── 2. Predictor Plots - Final.R
-│   └── 3. Multiple Regression Analyses - RangeThru Richness - Final.R
+│   ├── 1_Range_Richness.R
+│   ├── 2_Predictors.R
+│   └── 3_Regressions.R
 ├── data/
-│   ├── Data_All_Compiled.csv    # Survey data (19 sites × 19 variables)
-│   └── Species_Ranges.csv       # Species elevational ranges (30 species)
+│   ├── Data_All_Compiled.csv    # Survey data
+│   └── Species_Ranges.csv       # Species elevational ranges
 └── results/
     ├── figs/
     ├── 2-PredictorSummary-by-Mountain.csv
@@ -43,7 +40,7 @@ Git/
 ## Data
 
 ### `data/Data_All_Compiled.csv`
-Main dataset with one row per survey site (n = 19 sites across both ranges).
+Main dataset with one row per survey site.
 
 | Column | Description |
 |--------|-------------|
@@ -54,17 +51,17 @@ Main dataset with one row per survey site (n = 19 sites across both ranges).
 | TrapNights | Sampling effort |
 | Captures | Total mammal captures |
 | TmaxAvg | Average daily maximum temperature, warmest quarter (°C) |
-| PPTAvg | Average winter–spring precipitation (mm) |
+| PPTAvg | Average total winter–spring precipitation (mm) |
 | landfire_H_habitat_250 | Shannon habitat diversity index (250 m buffer) |
-| mean_evi_above_threshold | MODIS Enhanced Vegetation Index (growing season mean) |
+| mean_evi_above_threshold | Enhanced Vegetation Index (growing season mean) |
 | Width | Canyon width, ridgeline to ridgeline (m) |
 | Relief | Canyon relief, ridgeline to river channel (m) |
 | Hypsometric.Integral | Proportion of area above normalized elevation in each band |
 | Roughness | Surface roughness from 10 m DEM |
-| **RangeThru** | **Response variable**: range-through species richness (5–14) |
+| **RangeThru** | **Response variable**: range-through species richness |
 
 ### `data/Species_Ranges.csv`
-Minimum and maximum confirmed elevation (m) for each of 30 mammal species by mountain range (15 species per range, with some overlap).
+Minimum and maximum confirmed elevation (m) for each small mammal species by mountain range.
 
 ---
 
@@ -87,7 +84,7 @@ Sets working directories, loads libraries (`mgcv`, `bbmle`), defines shared plot
 - Fits linear and non-linear (GAM with smoothing splines, k = 3) models for three predictor groupings: all predictors, environmental only, geomorphological only
 - All models run in both natural units and z-score standardized (SD) units
 - Selects among models using AICc (corrected Akaike Information Criterion) with model weights
-- Produces forest plots of standardized regression coefficients with 95% confidence intervals
+- Produces plots of standardized regression coefficients with 95% confidence intervals
 - Produces residual diagnostic plots (predicted − observed richness vs. elevation)
 
 ---

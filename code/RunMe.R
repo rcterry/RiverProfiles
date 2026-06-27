@@ -29,9 +29,9 @@ cexs.pt <- 1.5
 
 #########################################################################
 
-source('1. Range Richness and Abundance Plots - Final.R')
-source('2. Predictor Plots - Final.R')
-source('3. Multiple Regression Analyses - RangeThru Richness - Final.R')
+source('1_Range_Richness.R')
+source('2_Predictors.R')
+source('3_Regressions.R')
 
 #########################################################################
 #########################################################################

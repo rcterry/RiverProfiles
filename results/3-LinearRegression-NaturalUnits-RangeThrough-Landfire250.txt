@@ -2,9 +2,79 @@
 [1] ""
 [1] "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 [1] "ALL PREDICTORS"
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+RangeThru ~ Mountain + Width + Relief + Hypsometric.Integral + 
+    Roughness + TmaxAvg + PPTAvg + landfire_H_habitat_250 + mean_evi_above_threshold
+
+Parametric coefficients:
+                          Estimate Std. Error t value Pr(>|t|)  
+(Intercept)              -9.391853  11.332520  -0.829   0.4266  
+MountainToiyabe           3.085927   1.693217   1.823   0.0984 .
+Width                    -0.001920   0.001014  -1.893   0.0876 .
+Relief                    0.012826   0.005414   2.369   0.0393 *
+Hypsometric.Integral     13.440866  10.958921   1.226   0.2481  
+Roughness                -0.305282   0.252925  -1.207   0.2552  
+TmaxAvg                   0.201215   0.335453   0.600   0.5620  
+PPTAvg                    0.003559   0.011335   0.314   0.7600  
+landfire_H_habitat_250    0.455874   1.946972   0.234   0.8196  
+mean_evi_above_threshold 16.900425  14.666922   1.152   0.2760  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+R-sq.(adj) =  0.704   Deviance explained = 84.4%
+-REML = 38.199  Scale est. = 1.5397    n = 20
 [1] ""
 [1] "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 [1] "GEO PREDICTORS ONLY"
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+RangeThru ~ Mountain + Width + Relief + Hypsometric.Integral + 
+    Roughness
+
+Parametric coefficients:
+                       Estimate Std. Error t value Pr(>|t|)  
+(Intercept)           1.6547537  3.6514425   0.453   0.6574  
+MountainToiyabe       0.7128060  0.9006073   0.791   0.4419  
+Width                -0.0014855  0.0006805  -2.183   0.0466 *
+Relief                0.0117585  0.0041548   2.830   0.0134 *
+Hypsometric.Integral 11.1509175  9.7079979   1.149   0.2700  
+Roughness            -0.1174062  0.1804672  -0.651   0.5259  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+R-sq.(adj) =   0.71   Deviance explained = 78.6%
+-REML = 39.976  Scale est. = 1.5107    n = 20
 [1] ""
 [1] "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 [1] "ENV PREDICTORS ONLY"
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+RangeThru ~ Mountain + TmaxAvg + PPTAvg + landfire_H_habitat_250 + 
+    mean_evi_above_threshold
+
+Parametric coefficients:
+                          Estimate Std. Error t value Pr(>|t|)   
+(Intercept)               1.975822   9.005232   0.219  0.82950   
+MountainToiyabe           4.993904   1.546016   3.230  0.00605 **
+TmaxAvg                  -0.128254   0.248547  -0.516  0.61390   
+PPTAvg                    0.001162   0.008600   0.135  0.89443   
+landfire_H_habitat_250   -0.575109   1.815201  -0.317  0.75605   
+mean_evi_above_threshold 26.714432  14.012158   1.907  0.07732 . 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+R-sq.(adj) =  0.598   Deviance explained = 70.4%
+-REML = 33.265  Scale est. = 2.0914    n = 20
