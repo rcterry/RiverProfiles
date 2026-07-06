@@ -106,7 +106,7 @@ install.packages(c("mgcv", "bbmle"))
 
 ## Authors
 
-- Rebecca C. Terry — Oregon State University (rebecca.terry@oregonstate.edu)
+- Rebecca C. Terry — Oregon State University (terryr@oregonstate.edu)
 - Brian K. Yanites — Indiana University, Bloomington
 - Jesse A. Laney — Portland State University
 - Rebecca J. Rowe — University of New Hampshire
