@@ -3,27 +3,26 @@
 ## Generates plots of Ranges along elevation, and richness by elevation
 ########
 
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ELEVATIONAL RANGES
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-elev.lims <- c(1700, 3000)
-
-# Set WD and read in  data
+# Set WD and read in data
 data <- read.csv(paste0(datadir, "Species_Ranges.csv"), header = T)
 
 # Sort data by min elevation
 data <- data[order(data$Min, data$Max), ]
 data$plot <- seq(1, nrow(data))
 
-
 # plotting
-
-
 data$col <- NA
 data$col[which(data$Mountain == "Toiyabe")] <- "sienna2"
 data$col[which(data$Mountain == "Rubies")] <- "dodgerblue2"
 
+elev.lims <- c(1700, 3000)
+
+cexs.lab = 1.2
+cexs.axis = 1
+cexs.pt = 1.5
 
 #~~~ Rubies Only ~~~~~~~~
 data.r <- data[which(data$Mountain == "Rubies"), ]
@@ -222,3 +221,4 @@ legend(
 )
 
 dev.off()
+

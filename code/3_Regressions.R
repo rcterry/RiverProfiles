@@ -78,7 +78,7 @@ out.env.lin.units <- gam(
 sink(
   paste0(
     resultsdir,
-    '3-LinearRegression-NaturalUnits-RangeThrough-Landfire250.txt'
+    '3-LinearRegression-NaturalUnits-RangeThru.txt'
   )
 )
 print("LINEAR REGRESSION MODELS WITH NATURAL UNITS - RANGE THRU RICHNESS")
@@ -141,7 +141,7 @@ out.env.nonlin.units <- gam(
 sink(
   paste0(
     resultsdir,
-    '3-NonLinearRegression-NaturalUnits-RangeThru-Landfire250.txt'
+    '3-NonLinearRegression-NaturalUnits-RangeThru.txt'
   )
 )
 print("NON-LINEAR REGRESSION MODELS WITH NATURAL UNITS - RANGE THRU RICHNESS")
@@ -196,7 +196,7 @@ aicc.both
 sink(
   paste0(
     resultsdir,
-    '3-AIC(c)comparisons-NaturalUnits-RangeThru-Landfire250.txt'
+    '3-AIC(c)comparisons-NaturalUnits-RangeThru.txt'
   )
 )
 print("AIC(c) COMPARISON - NATURAL UNITS - RANGE THRU RICHNESS")
@@ -259,7 +259,7 @@ out.env.lin.units.sd <- gam(
 
 sink(paste0(
   resultsdir,
-  '3-LinearRegression-SDUnits-RangeThru-Landfire250.txt'
+  '3-LinearRegression-SDUnits-RangeThru.txt'
 ))
 print("LINEAR REGRESSION MODELS WITH SD UNITS - RANGE THRU RICHNESS")
 print("")
@@ -357,7 +357,7 @@ ylims = c(1, 9)
 par(mfrow = c(1, 1))
 
 pdf(
-  paste0(figdir, "3-Estimates-All-Landfire250.pdf"),
+  paste0(figdir, "3-Estimates-All.pdf"),
   height = 6,
   width = 3.5,
   useDingbats = FALSE
@@ -405,7 +405,7 @@ dev.off()
 
 
 pdf(
-  paste0(figdir, "3-Estimates-Env-Landfire250.pdf"),
+  paste0(figdir, "3-Estimates-Env.pdf"),
   height = 6,
   width = 3.5,
   useDingbats = FALSE
@@ -537,7 +537,7 @@ out.env.nonlin.units.sd <- gam(
 
 sink(paste0(
   resultsdir,
-  '3-NonLinearRegression-SDUnits-RangeThru-Landfire250.txt'
+  '3-NonLinearRegression-SDUnits-RangeThru.txt'
 ))
 print("NON-LINEAR REGRESSION MODELS WITH SD UNITS - RANGE THRU RICHNESS")
 print("")
@@ -588,7 +588,7 @@ aicc.both
 
 sink(paste0(
   resultsdir,
-  '3-AIC(c)_comparisons-SDUnits-RangeThru-Landfire250.txt'
+  '3-AIC(c)_comparisons-SDUnits-RangeThru.txt'
 ))
 print("AIC(c) COMPARISON - SD UNITS - RANGE THRU RICHNESS")
 print("")
@@ -619,7 +619,7 @@ data$pred.all <- predict(out.all.lin.units)
 pdf(
   paste0(
     figdir,
-    "3-Residuals-by-Elevation-FullModel-ForMS-Landfire250.pdf"
+    "3-Residuals-by-Elevation-FullModel.pdf"
   ),
   width = 5,
   height = 4
@@ -664,7 +664,7 @@ dev.off()
 data$pred.geo <- predict(out.geo.lin.units)
 
 pdf(
-  paste0(figdir, "3-Residuals-by-Elevation-GeoModel-ForMS.pdf"),
+  paste0(figdir, "3-Residuals-by-Elevation-GeoModel.pdf"),
   width = 5,
   height = 4
 )
@@ -709,7 +709,7 @@ data$pred.env <- predict(out.env.lin.units)
 pdf(
   paste0(
     figdir,
-    "3-Residuals-by-Elevation-EnvModelFor-MS-Landfire250.pdf"
+    "3-Residuals-by-Elevation-EnvModel.pdf"
   ),
   width = 5,
   height = 4
@@ -749,3 +749,121 @@ axis(
 box(lwd = 2)
 
 dev.off()
+
+###################################################################
+# Assessing Effecits of Co-linearity in Predictors PCA reanalysis
+###################################################################
+
+# PCA APPROACH
+
+full_vars <- c("Width","Relief","Hypsometric.Integral","Roughness","mean_evi_above_threshold","TmaxAvg","PPTAvg","landfire_H_habitat_250")
+geo_vars <- c("Width","Relief","Hypsometric.Integral","Roughness")
+env_vars <- c("mean_evi_above_threshold","TmaxAvg","PPTAvg","landfire_H_habitat_250")
+
+# Use complete cases so PC scores line up with rows of zdata
+cc <- complete.cases(zdata[, c(full_vars, geo_vars, env_vars, "RangeThru", "Mountain")])
+zd <- zdata[cc, ]
+
+# PCA (scale. = TRUE is harmless if already z-scored)
+pca_full <- prcomp(zd[,full_vars], center = TRUE, scale. = TRUE)
+pca_geo <- prcomp(zd[, geo_vars], center = TRUE, scale. = TRUE)
+pca_env <- prcomp(zd[, env_vars], center = TRUE, scale. = TRUE)
+
+# Variance explained
+summary(pca_full)
+summary(pca_geo)
+summary(pca_env)
+
+# Loadings (needed to interpret the axes)
+round(pca_full$rotation, 2)
+round(pca_geo$rotation, 2)
+round(pca_env$rotation, 2)
+
+### Axis retention procedure
+pdf(paste0(figdir,"3-ScreePlot-BrokenStick-Comparison.pdf"),
+  width = 10,
+  height = 6
+)
+par(mfrow = c(1, 3))
+screeplot(pca_full, bstick = TRUE, main = "Full")
+screeplot(pca_geo, bstick = TRUE, main = "Geo")
+screeplot(pca_env, bstick = TRUE, main = "Env")
+dev.off()
+par(mfrow = c(1, 1))
+
+# Retain axes whose eigenvalues exceed the broken-stick line, and check this against where the scree plot bends. Then add the scores to the data and refit. 
+
+# Keep 2 predictors for full and 1 for geo and Env each.  
+zd$fullPC1 <- pca_full$x[, 1]; zd$fullPC2 <- pca_full$x[, 2]
+zd$geoPC1 <- pca_geo$x[, 1]
+zd$envPC1 <- pca_env$x[, 1]
+
+m_geo <- gam(RangeThru ~ Mountain + geoPC1, data = zd, method = "REML")
+m_env <- gam(RangeThru ~ Mountain + envPC1, data = zd, method = "REML")
+m_all <- gam(RangeThru ~ Mountain + fullPC1 + fullPC2, data = zd, method = "REML")
+
+aic <- AIC(m_geo, m_env, m_all)
+
+aicc <- AICctab(
+  m_all,
+  m_geo,
+  m_env,
+  base = TRUE,
+  weights = TRUE
+)
+
+sink(paste0(resultsdir,'3-AIC(c)_PCA_2Full_1Env_1Geo.txt'))
+print("AIC(c) COMPARISON - PCA - 2 axes for full - 1 axis for Env and Geo")
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+print("AIC")
+aic
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+print("AICC")
+aicc
+sink()
+
+
+# Keep 1 predictor for each model
+zd$fullPC1 <- pca_full$x[, 1]
+zd$geoPC1 <- pca_geo$x[, 1]
+zd$envPC1 <- pca_env$x[, 1]
+
+m_geo <- gam(RangeThru ~ Mountain + geoPC1, data = zd, method = "REML")
+m_env <- gam(RangeThru ~ Mountain + envPC1, data = zd, method = "REML")
+m_all <- gam(RangeThru ~ Mountain + fullPC1, data = zd, method = "REML")
+
+aic <- AIC(m_geo, m_env, m_all)
+
+aicc <- AICctab(
+  m_all,
+  m_geo,
+  m_env,
+  base = TRUE,
+  weights = TRUE
+)
+
+sink(paste0(resultsdir,'3-AIC(c)_PCA_1Full_1Env_1Geo.txt'))
+print("AIC(c) COMPARISON - PCA - 1 axis for all models")
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+print("AIC")
+aic
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+print("AICC")
+aicc
+sink()
+
+#### Variance Partitioning Analysis
+v <- varpart(zd$RangeThru, ~geoPC1, ~envPC1, ~Mountain, data = zd)
+
+sink(paste0(resultsdir,'3-PCA_VariancePartitioning.txt'))
+print("Variance Partitioning Analysis - geoPC1, envPC1")
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+v
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+sink()

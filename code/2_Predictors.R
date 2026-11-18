@@ -4,14 +4,10 @@
 ## Outputs min, max, and range of predictor variables
 #########################################################
 
-# Add in color code for mountain
-dat$col <- NA
-dat$col[which(dat$Mountain == "Ruby")] <- cols2[2]
-dat$col[which(dat$Mountain == "Toiyabe")] <- cols2[1]
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PREDICTOR VARIABLES BY ELEVATION
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+elev.lims <- c(1700, 3000)
 preds = data.frame(Elevation = seq(elev.lims[1], elev.lims[2], length = 100))
 
 # Climate data
@@ -579,4 +575,124 @@ write.csv(
   paste0(resultsdir, '2-PredictorSpread-Toiyabe-minus-Ruby.csv'),
   row.names = F
 )
+
+#######################################################
+## Representing Co-linearity in Predictors
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PAIRWISE CORRELATIONS
+
+# Pairwise Correlation Plot
+corrs <- cor(dat[,c(
+  'TmaxAvg',
+  'PPTAvg',
+  'landfire_H_habitat_250',
+  'mean_evi_above_threshold',
+  'Relief',
+  'Width',
+  'Hypsometric.Integral',
+  'Roughness')])
+
+pdf(
+  paste0(figdir, "2-CorrelationPlot-forMS.pdf"),
+  width = 12,
+  height = 8,
+  useDingbats = F
+)
+corrplot.mixed(corrs,
+               upper = 'ellipse',
+               tl.pos = 'lt'
+)
+dev.off()
+
+#################################################################
+# Calculate means of within group and between group correlations
+
+# Rename cols and rows with variable type
+nms <- c("Env","Env","Env","Env","Geo","Geo","Geo","Geo")
+colnames(corrs) <- nms
+row.names(corrs) <- nms
+
+# Only use half the matrix
+corrs[upper.tri(corrs, diag = TRUE)] <- NA
+
+EE <- corrs[which(row.names(corrs)=="Env"),which(colnames(corrs)=="Env")]
+GG <- corrs[which(row.names(corrs)=="Geo"),which(colnames(corrs)=="Geo")]
+EG <- corrs[-which(row.names(corrs)=="Env"),which(colnames(corrs)=="Env")]
+
+# Calculate mean correlations (using absolute values)
+EEcor <- mean(abs(EE),na.rm=T)
+GGcor <- mean(abs(GG),na.rm=T)
+EGcor <- mean(abs(EG),na.rm=T)
+
+corr.stats <- cbind(c("EE","GG","EG"),
+                    c(mean(abs(EE),na.rm=T), mean(abs(GG),na.rm=T), mean(abs(EG),na.rm=T)),
+                    c(range(abs(EE),na.rm=T)[1], range(abs(GG),na.rm=T)[1], range(abs(EG),na.rm=T)[1]),
+                    c(range(abs(EE),na.rm=T)[2], range(abs(GG),na.rm=T)[2], range(abs(EG),na.rm=T)[2])
+)
+colnames(corr.stats) <- c("Comparison","Mean","Min","Max")
+corr.stats <- data.frame(corr.stats)
+for (c in 2:ncol(corr.stats)) {corr.stats[,c] <- as.numeric(corr.stats[,c])}
+
+## Table for MS
+write.csv(
+  corr.stats, 
+  paste0(resultsdir, '2-PredictorCorrelationStats.csv'),
+  row.names = F
+  )
+
+#################################################################
+# Calculate Variance Inflation Factors (VIFs)
+
+lm.geo <- lm(RangeThru ~ 
+               Mountain + 
+               Width + 
+               Relief + 
+               Hypsometric.Integral + 
+               Roughness, 
+             data = dat)
+lm.env <- lm(RangeThru ~ 
+               Mountain + 
+               mean_evi_above_threshold + 
+               TmaxAvg + 
+               PPTAvg + 
+               landfire_H_habitat_250, 
+             data = dat)
+lm.full <- lm(RangeThru ~ 
+                Mountain + 
+                Width + 
+                Relief + 
+                Hypsometric.Integral + 
+                Roughness + 
+                mean_evi_above_threshold +
+                TmaxAvg + 
+                PPTAvg + 
+                landfire_H_habitat_250, 
+              data = dat)
+
+f <- vif(lm.full)             
+g <- vif(lm.geo)
+e <- vif(lm.env)
+
+write.csv(
+  corr.stats, 
+  paste0(resultsdir, '2-PredictorCorrelationStats.csv'),
+  row.names = F
+)
+
+sink(paste0(resultsdir, '2-VarianceInflationFactors.txt'))
+print("VARIANCE INFLATION FACTORS")
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+print("FULL MODEL")
+f
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+print("GEO ONLY")
+g
+print("")
+print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+print("ENV ONLY")
+e
+sink()
+
 
